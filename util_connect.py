@@ -1,6 +1,7 @@
 import json
 import requests
 import time
+import numpy
 
 # Initializations
 channel = '88'
@@ -54,6 +55,7 @@ def package():
     command = hostname + swarm_id + '/package?dr=2M'
     r = requests.get(command)
     content = r.json()
+    print(content)
     coordinates = numpy.array(content['coordinates'])
     x = coordinates[0]
     y = coordinates[1]
@@ -67,7 +69,8 @@ def deliver(drone_id, package_id):
     command = hostname + swarm_id + '/' + str(drone_id) + '/deliver?dr=2M&package_id=' + str(package_id)
     r = requests.get(command)
     content = r.json()
-    return content[]
+    print(content)
+    return content['success']
 
 # 6
 def goto(drone_id, x, y, z, v):
@@ -114,7 +117,7 @@ if __name__ == "__main__":
     #(x,y,z,weight, id) = package()
     #print(status(31))
 
-    connectDrone(31)
+    #connectDrone(31)
     # takeoff(31,0.5,1)
     # time.sleep(1)
     # goto(31,1,2.5,0.5,1)
@@ -122,6 +125,7 @@ if __name__ == "__main__":
     # land(31,0,0.5)
     # time.sleep(3)
     
+    #deliver(31,'303980036011023439451899638628793921164')
     
-    disconnectDrone(31)
+    #disconnectDrone(31)
 
