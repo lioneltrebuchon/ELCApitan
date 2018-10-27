@@ -109,8 +109,9 @@ def getBuildings():
     buildins = content["buildings"]
     return
 
+
 # Testing.
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # Initializations.
     # hostname = 'http://10.4.14.28:5000'
     # Command to test.
@@ -128,4 +129,3 @@ if __name__ == "__main__":
     #deliver(31,'303980036011023439451899638628793921164')
     
     #disconnectDrone(31)
-
