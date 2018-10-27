@@ -3,6 +3,14 @@ import json
 import requests
 import numpy
 
+# Initializations
+channel = '88'
+address = 'E7E7E7E7'
+radio = '0'
+swarm_id = 'elcapitan'
+
+# Functions
+
 def createSwarmID():
     swarm_id = 'elcapitan'
     command = hostname + swarm_id + '/register_swarm?arena_id=2'
@@ -11,20 +19,13 @@ def createSwarmID():
     return content
 
 def connectDrone(drone_id):
-    channel = '88'
-    address = 'E7E7E7E7' + str(drone_id)
-    radio = '0'
-    swarm_id = 'elcapitan'
-    command = hostname + swarm_id + '/' + str(drone_id) + '/connect?r=' + radio + '&c=' + channel + '&a=' + address + '&dr=2M'
+    addressDrone = address + str(drone_id)
+    command = hostname + swarm_id + '/' + str(drone_id) + '/connect?r=' + radio + '&c=' + channel + '&a=' + addressDrone + '&dr=2M'
     r = requests.get(command)
     content = r.json()
     return content
 
 def disconnectDrone(drone_id):
-    channel = '88'
-    address = 'E7E7E7E7' + str(drone_id)
-    radio = '0'
-    swarm_id = 'elcapitan'
     command = hostname + swarm_id + '/' + str(drone_id) + '/disconnect?dr=2M'
     r = requests.get(command)
     content = r.json()
@@ -50,5 +51,5 @@ if __name__ == "__main__":
     hostname = 'http://10.4.14.248:5000/api/'
     mode = 'urllib3'
     # Command to test.
-    print(connectDrone(32))
-    print(disconnectDrone(32))
+    print(connectDrone(33))
+    print(disconnectDrone(33))
