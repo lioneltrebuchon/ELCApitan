@@ -1,4 +1,3 @@
-import urllib.request
 import json
 import requests
 import numpy
@@ -8,6 +7,8 @@ channel = '88'
 address = 'E7E7E7E7'
 radio = '0'
 swarm_id = 'elcapitan'
+hostname = 'http://10.4.14.248:5000/api/'
+mode = 'urllib3'
 
 # Functions
 
@@ -48,8 +49,6 @@ def getBuildings():
 if __name__ == "__main__":
     # Initializations.
     # hostname = 'http://10.4.14.28:5000'
-    hostname = 'http://10.4.14.248:5000/api/'
-    mode = 'urllib3'
     # Command to test.
     print(connectDrone(33))
     print(disconnectDrone(33))
