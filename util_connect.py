@@ -1,6 +1,6 @@
 import json
 import requests
-import numpy
+import time
 
 # Initializations
 channel = '88'
@@ -9,6 +9,7 @@ radio = '0'
 swarm_id = 'elcapitan'
 hostname = 'http://10.4.14.248:5000/api/'
 mode = 'urllib3'
+err_perc = 0.1
 
 # Functions
 
@@ -24,12 +25,13 @@ def connectDrone(drone_id):
     command = hostname + swarm_id + '/' + str(drone_id) + '/connect?r=' + radio + '&c=' + channel + '&a=' + addressDrone + '&dr=2M'
     r = requests.get(command)
     content = r.json()
-    id = content['id']
+    print(content)
     x = content['x']
     y = content['y']
     z = content['z']
-    battery_percentage = content['battery_percentage']
-    return (x,y,z,battery_percentage)
+    #battery_percentage = content['battery_percentage']
+    return (x,y,z)#battery_percentage)
+    
 
 def disconnectDrone(drone_id):
     command = hostname + swarm_id + '/' + str(drone_id) + '/disconnect?dr=2M'
@@ -60,8 +62,40 @@ def package():
     weight = content['weight']
     return (x,y,z, weight, id)
 
-def goto():
-    return 0
+# 5
+def deliver(drone_id, package_id):
+    command = hostname + swarm_id + '/' + str(drone_id) + '/deliver?dr=2M&package_id=' + str(package_id)
+    r = requests.get(command)
+    content = r.json()
+    return content[]
+
+# 6
+def goto(drone_id, x, y, z, v):
+    command = hostname + swarm_id + '/' + str(drone_id) + '/goto?x=' + str(x) + '&y=' + str(y) + '&z=' + str(z) + '&v=' + str(v) + '&dr=2M'
+    r = requests.get(command)
+    content = r.json()
+    print(content)
+    return content['duration']
+
+# 7
+def land(drone_id,target_height,vel):
+    command = hostname + swarm_id + '/' + str(drone_id) + '/land?dr=2M&z=' + str(target_height) + '&v=' + str(vel)
+    r = requests.get(command)
+    content = r.json()
+    print(content)
+    #while (content['var_z'] > 0): # TODO check this, no idea how those drones behave and wheter z = 0 is what I believe it is!
+    #    time.sleep(0.1)
+    #    duration = duration + 0.1
+    return content['duration']
+
+# 8
+def takeoff(drone_id, z, v):
+    duration = 0
+    command = hostname + swarm_id + '/' + str(drone_id) + '/takeoff?z=' + str(z) + '&v=' + str(v) + '&dr=2M'
+    r = requests.get(command)
+    content = r.json()
+    print( content)
+    return content['duration']
 
 def getBuildings():
     command = '/api/arena'
@@ -77,6 +111,17 @@ if __name__ == "__main__":
     # Initializations.
     # hostname = 'http://10.4.14.28:5000'
     # Command to test.
-    (x,y,z,weight, id) = package()
-    print(status(31))
+    #(x,y,z,weight, id) = package()
+    #print(status(31))
+
+    connectDrone(31)
+    # takeoff(31,0.5,1)
+    # time.sleep(1)
+    # goto(31,1,2.5,0.5,1)
+    # time.sleep(5)
+    # land(31,0,0.5)
+    # time.sleep(3)
     
+    
+    disconnectDrone(31)
+
