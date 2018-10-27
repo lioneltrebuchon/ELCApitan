@@ -117,15 +117,17 @@ if __name__ == "__main__":
     #(x,y,z,weight, id) = package()
     #print(status(31))
 
-    #connectDrone(31)
-    # takeoff(31,0.5,1)
-    # time.sleep(1)
-    # goto(31,1,2.5,0.5,1)
-    # time.sleep(5)
-    # land(31,0,0.5)
-    # time.sleep(3)
+    connectDrone(31)
+    (x,y,z, weight, id) = package()
+    wait = takeoff(31,0.5,1)
+    time.sleep(wait)
+    wait = goto(31,x,y,z,0.5)
+    time.sleep(wait)
+    wait = land(31,0,0.2)
+    time.sleep(wait)
+
     
-    #deliver(31,'303980036011023439451899638628793921164')
-    
-    #disconnectDrone(31)
+    deliver(31,id)
+    time.sleep(2)
+    disconnectDrone(31)
 
