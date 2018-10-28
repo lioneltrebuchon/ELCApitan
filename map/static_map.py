@@ -1,11 +1,13 @@
+import time
 import matplotlib.pyplot as plt
 import math
 from obstrange import *
+from calc_obstacle_map import *
 
 #print(__file__ + " start!!")
 
 def static_map(res,show_animation=False): 
-
+    start = time.time()
     # define arena 
     w, h = 4, 4
     n_cell = w/res
@@ -68,18 +70,13 @@ def static_map(res,show_animation=False):
             ox.append(i)
             oy.append(j)
 
-
-
+    # Create Obstacle map 
+    obmap, minx, miny, maxx, maxy, xwidth, ywidth = calc_obstacle_map(ox,oy,res,drone_size)
+    end = time.time()
+    print(end-start) 
     if show_animation:
         plt.plot(ox, oy, ".k")
-    #    plt.plot(sx, sy, "xr")
-    #    plt.plot(gx, gy, "xb")
         plt.grid(True)
         plt.axis("equal")
-
-    #rx, ry = a_star_planning(sx, sy, gx, gy, ox, oy, grid_size, robot_size)
-
-    if show_animation:
-    #    plt.plot(rx, ry, "-r")
         plt.show()
-    return ox,oy
+    return ox,oy, obmap
