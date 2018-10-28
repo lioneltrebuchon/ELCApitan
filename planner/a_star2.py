@@ -189,10 +189,10 @@ def main():
     print(__file__ + " start!!")
 
     # start and goal position
-    sx = 30.0  # [m]
-    sy = 2.0  # [m]
-    gx = 16.0  # [m]
-    gy = 38.0  # [m]
+    sx = 10.0  # [m]
+    sy = 10.0  # [m]
+    gx = 38.0  # [m]
+    gy = 8.0  # [m]
     grid_size = 1.0  # [m]
     robot_size = 1.5  # [m]
 
@@ -258,10 +258,10 @@ def main():
         plt.grid(True)
         plt.axis("equal")
 
-    rx, ry = a_star_planning(sx, sy, gx, gy, ox, oy, grid_size, robot_size)
+#    rx, ry = a_star_planning(sx, sy, gx, gy, ox, oy, grid_size, robot_size)
 
-    if show_animation:
-        plt.plot(rx, ry, "-r")
+  #  if show_animation:
+  #      plt.plot(rx, ry, "-r")
         plt.show()
 
 if __name__ == '__main__':

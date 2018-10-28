@@ -1,7 +1,6 @@
 def dyn_obst(drone_bl, drone_tr, xwidth,ywidth):
 
     dox, doy = [],[]
-
     #x coordinates
     for i in range(drone_bl[0],drone_tr[0]):
         # y coordinates 
@@ -11,7 +10,7 @@ def dyn_obst(drone_bl, drone_tr, xwidth,ywidth):
             doy.append(j)
 
     #turn indices in matrix 
-    obmap_dyn = [[False for i in range(xwidth)] for i in range(ywidth)]
+    obmap_dyn = [[False for i in range(int(xwidth))] for i in range(int(ywidth))]
     for i in dox:
         for j in doy: 
             obmap_dyn[i][j] = True

@@ -71,12 +71,12 @@ def static_map(res,show_animation=False):
             oy.append(j)
 
     # Create Obstacle map 
-    obmap, minx, miny, maxx, maxy, xwidth, ywidth = calc_obstacle_map(ox,oy,res,drone_size)
+#    obmap, minx, miny, maxx, maxy, xwidth, ywidth = calc_obstacle_map(ox,oy,res,drone_size)
     end = time.time()
-    print(end-start) 
+#    print(end-start) 
     if show_animation:
         plt.plot(ox, oy, ".k")
         plt.grid(True)
         plt.axis("equal")
         plt.show()
-    return ox,oy, obmap
+    return ox,oy, #obmap
