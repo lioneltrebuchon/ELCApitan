@@ -114,7 +114,7 @@ dmypy.json
 .pyre/
 
 # vim swap files
-.swp
-.swo
-.un
+*.swp
+*.swo
+*.un
 *~

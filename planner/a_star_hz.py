@@ -31,12 +31,11 @@ def calc_fianl_path(ngoal, closedset, reso):
         n = closedset[pind]
         rx.append(n.x * reso)
         ry.append(n.y * reso)
-        pind = n.pind
-
+        pind = n.
     return rx, ry
 
 
-def a_star_planning(sx, sy, gx, gy, ox, oy, reso, rr):
+def a_star_planning(sx, sy, gx, gy, ox, oy, reso, rr, obmap, minx, miny, maxx, maxy, xw, yw):
     """
     gx: goal x position [m]
     gx: goal x position [m]
@@ -132,38 +131,6 @@ def verify_node(node, obmap, minx, miny, maxx, maxy):
     return True
 
 
-def calc_obstacle_map(ox, oy, reso, vr):
-
-    minx = round(min(ox))
-    miny = round(min(oy))
-    maxx = round(max(ox))
-    maxy = round(max(oy))
-    #  print("minx:", minx)
-    #  print("miny:", miny)
-    #  print("maxx:", maxx)
-    #  print("maxy:", maxy)
-
-    xwidth = round(maxx - minx)
-    ywidth = round(maxy - miny)
-    #  print("xwidth:", xwidth)
-    #  print("ywidth:", ywidth)
-
-    # obstacle map generation
-    obmap = [[False for i in range(xwidth)] for i in range(ywidth)]
-    for ix in range(xwidth):
-        x = ix + minx
-        for iy in range(ywidth):
-            y = iy + miny
-            #  print(x, y)
-            for iox, ioy in zip(ox, oy):
-                d = math.sqrt((iox - x)**2 + (ioy - y)**2)
-                if d <= vr / reso:
-                    obmap[ix][iy] = True
-                    break
-
-    return obmap, minx, miny, maxx, maxy, xwidth, ywidth
-
-
 def calc_index(node, xwidth, xmin, ymin):
     return (node.y - ymin) * xwidth + (node.x - xmin)
 
@@ -182,50 +149,4 @@ def get_motion_model():
     return motion
 
 
-def main():
-    print(__file__ + " start!!")
 
-    # start and goal position
-    sx = 10.0  # [m]
-    sy = 10.0  # [m]
-    gx = 50.0  # [m]
-    gy = 50.0  # [m]
-    grid_size = 1.0  # [m]
-    robot_size = 1.0  # [m]
-
-    ox, oy = [], []
-
-    for i in range(60):
-        ox.append(i)
-        oy.append(0.0)
-    for i in range(60):
-        ox.append(60.0)
-        oy.append(i)
-    for i in range(61):
-        ox.append(i)
-        oy.append(60.0)
-    for i in range(61):
-        ox.append(0.0)
-        oy.append(i)
-    for i in range(40):
-        ox.append(20.0)
-        oy.append(i)
-    for i in range(40):
-        ox.append(40.0)
-        oy.append(60.0 - i)
-
-    if show_animation:
-        plt.plot(ox, oy, ".k")
-        plt.plot(sx, sy, "xr")
-        plt.plot(gx, gy, "xb")
-        plt.grid(True)
-        plt.axis("equal")
-
-    rx, ry = a_star_planning(sx, sy, gx, gy, ox, oy, grid_size, robot_size)
-
-    if show_animation:
-        plt.plot(rx, ry, "-r")
-        plt.show()
-
-if __name__ == '__main__':
-    main()
