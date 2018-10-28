@@ -185,14 +185,14 @@ def get_motion_model():
     return motion
 
 
-def main():
+def call_astar(sx,sy,gx,gy):
     print(__file__ + " start!!")
 
     # start and goal position
-    sx = 10.0  # [m]
-    sy = 10.0  # [m]
-    gx = 38.0  # [m]
-    gy = 8.0  # [m]
+    #sx = 30.0  # [m]
+    #sy = 2.0  # [m]
+    #gx = 16.0  # [m]
+    #gy = 38.0  # [m]
     grid_size = 1.0  # [m]
     robot_size = 1.5  # [m]
 
@@ -250,19 +250,8 @@ def main():
             ox.append(i)
             oy.append(j)
 
-       
-    if  show_animation:
-        plt.plot(ox, oy, ".k")
-        plt.plot(sx, sy, "xr")
-        plt.plot(gx, gy, "xb")
-        plt.grid(True)
-        plt.axis("equal")
-
     rx, ry = a_star_planning(sx, sy, gx, gy, ox, oy, grid_size, robot_size)
-
-    if show_animation:
-        plt.plot(rx, ry, "-r")
-        plt.show()
-
+    return rx/10,ry/10
+  
 if __name__ == '__main__':
     main()
