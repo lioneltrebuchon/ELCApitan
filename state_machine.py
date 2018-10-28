@@ -5,112 +5,156 @@ import time
 # -*- coding: utf-8 -*-
 
 def reached_pos(id,des_pos,accuracy):
-   (x,y,z,battery_percentage) = status(id)
-   if abs(des_pos[0]-x) <= accuracy and abs(des_pos[1]-y) <= accuracy and abs(des_pos[2]-z) <= accuracy:
-       return True
+   (x,y,z) = status(id)
+   if abs(des_pos[0]-x) <= accuracy:
+       if abs(des_pos[1]-y) <= accuracy: 
+           if abs(des_pos[2]-z) <= accuracy:
+               print('ID: '+ str(id) +' Reached Position x:'+ str(des_pos[0]) + ' y: ' + str(des_pos[1]) + ' z: ' + str(des_pos[2]))
+               return True
    else:
        return False
 
-N = 1;                              #number of drones
+def reached_height(id,des_pos,accuracy):
+    (x,y,z) = status(id)
+    if abs(des_pos[2]-z) <= accuracy:
+        print('ID: '+ str(id) + 'Reached height:'+ str(des_pos[2]))
+        return True
+    else:
+       return False
+
+N = 3;                              #number of drones
 drone_id = np.array([31, 32, 33]);  #array containing the 3 drones' IDs
 z_takeoff = 0.5;                    #takeoff altitude
-v_takeoff = 1;                      #takeoff speed
-v_travel = 1;                       #travel speed
-v_landing = 0.5;                    #landing speed
+v_takeoff = 0.9;                      #takeoff speed
+v_travel = 0.7;                       #travel speed
+v_landing = 0.1;                    #landing speed
 target_height = 0;                  #landing height
+goto_height = 0.1
 x_base = 2.2;                       #base coordinates
 y_base = 1.6;
 z_base = 0;
-accuracy = 0.2;                     #standard deviation
+accuracy = 0.03;                     #standard deviation
 
 #Possible states of the drones
 idle            = 0;
-pickup          = 1;
+pickingup       = 1;
 readyfortakeoff = 2;
-takeoff         = 3;
+takingoff       = 3;
 move            = 4;
 readytoland     = 5;
-land            = 6;
-deliver         = 7;
+landing         = 6;
+delivering      = 7;
 
-
+reset_package(89797648235)
+# connect to drone 
+for i in range(0,N):
+    connectDrone(drone_id[i]);
 
 #States of drones 31,32,33
 state = np.array([idle, idle, idle]);
-state1 = idle
+
 #Initialize desired position to the base
 desired_pos = np.array([ [x_base,y_base,z_base], [x_base,y_base,z_base], [x_base,y_base,z_base] ]);
 
 #Package array
-package_info = np.array([ [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0] ])
+package_info = np.array([[[x_base,y_base,0.5,0.0], [0.0,0.0,0.0,0.0], [0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0]],[[x_base,y_base,0.5,0.0], [0.0,0.0,0.0,0.0], [0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0]],[[x_base,y_base,0.5,0.0], [0.0,0.0,0.0,0.0], [0.0,0.0,0.0,0.0],[0.0,0.0,0.0,0.0]]])
+package_id = [["","","",""],["","","",""],["","","",""]]
 package_index = np.array([0,0,0])
-
+counter = np.array([0,0,0])
 
 #---------------------------------------------------------------------------------------------------
-
+ #Initialize drone status
+curr_pos = np.array([ [x_base,y_base,z_base], [x_base,y_base,z_base], [x_base,y_base,z_base] ]);
+  
 while(True):
-    #Initialize drone status
-    curr_pos = np.array([ [x_base,y_base,z_base], [x_base,y_base,z_base], [x_base,y_base,z_base] ]);
+    for l in range(0,N):
+        (x,y,z) = status(drone_id[i])
+        curr_pos[l][0]=x;
+        curr_pos[l][1]=y;
+        curr_pos[l][2]=z;
+
     for i in range(0,N):
-        (x,y,z,battery_percentage) = status(drone_id[i])
-        curr_pos[i][0]=x;
-        curr_pos[i][1]=y;
-        curr_pos[i][2]=z;
+        #Drone 1 is allowed to pickup parcel
+        if state[0] == idle:
+            state[0] = readyfortakeoff;
+        if state[1] == idle and state[0] == pickingup:
+            state[1] = readyfortakeoff;
+        if state[2] == idle  and state[1] == pickingup:
+            state[2] = readyfortakeoff;
 
-    i=0
+        #Drone 1 picks up parcel and is ready for takeoff
+        if state[i] == pickingup:
+            for j in range(0,3):
+                (x, y, z, weight, ids) = package();
+                package_info[i][j][0] = x;
+                package_info[i][j][1] = y;
+                package_info[i][j][2] = z_takeoff;
+                package_info[i][j][3] = weight;
+                package_id[j] = ids;
+                counter[i] = 0
+                while(1):
+                    if pickup(drone_id[i],str(ids)) == 1:
+                        break
+                    elif counter[i] > 8:
+                        takeoff(drone_id[i], z_takeoff, v_takeoff);
+                        counter[i] = counter[i] + 1
+                    elif counter[i] > 20:
+                        land(drone_id[i],target_height,v_landing)
+                        counter[i] = counter[i] + 1
+                    elif counter[i] > 50:
+                        counter[i]= 0
+                    counter[i] = counter[i] + 1
+            package_info[i][3][0] = x_base;
+            package_info[i][3][1] = y_base;
+            package_info[i][3][2] = 0.5;
+            package_info[i][3][3] = 0;
+            package_index[i] = 0;
+            print(package_info)
+            print(package_id)
+            state[i] = readyfortakeoff;
 
-    #Drone 1 is allowed to pickup parcel
-    if state1 == idle:
-       state1 = pickup;
+        #Drone 1 takes off
+        if state[i] == readyfortakeoff:
+            takeoff(drone_id[i], z_takeoff, v_takeoff);
+            state[i] = takingoff;
+            desired_pos[i,2] = z_takeoff;
 
-    #Drone 1 picks up parcel and is ready for takeoff
-    if state1 == pickup:
-        for j in range(0,3):
-            (x, y, z, weight, package_id) = package();
-            package_info[package_index[j]][0] = x;
-            package_info[package_index[j]][1] = y;
-            package_info[package_index[j]][2] = z;
-            package_info[package_index[j]][3] = weight;
-            package_info[package_index[j]][4] = int(package_id);
-        package_info[package_index[3]][0] = x_base;
-        package_info[package_index[3]][1] = y_base;
-        package_info[package_index[3]][2] = z_base;
-        package_info[package_index[3]][3] = 0;
-        package_info[package_index[3]][4] = 0;
-        print(package_info)
-        state1 = readyfortakeoff;
+        #As long as drone 1 hasn't reached z target, continue taking off
+        if state[i] == takingoff:
+            
+            if reached_height(drone_id[i],desired_pos[i,:],accuracy) == 1:
+                state[i] = move;
+                desired_pos[i,0:3]= package_info[i,package_index[i],0:3]
 
-    #Drone 1 takes off
-    if state1 == readyfortakeoff:
-        takeoff(drone_id[i], z_takeoff, v_takeoff);
-        state1 = takeoff;
+        if state[i] == move:
+            #call path_planning
+            goto(drone_id[i],package_info[i][package_index[i]][0] ,package_info[i][package_index[i] ][1],package_info[i][package_index[i] ][2], v_travel); 
 
-    #As long as drone 1 hasn't reached z target, continue taking off
-    if state1 == takeoff:
-        desired_pos[i,2] = z_takeoff;
-        if reached_pos(drone_id[i],desired_pos,accuracy) == 1:
-            state1 = move;
-            desired_pos[i,0:3]= package_info[package_index[i],0:3]
+            if reached_pos(drone_id[i],desired_pos[i,:],accuracy) == 1:
+                state[i] = readytoland
 
-    if state1 == move:
-        #call path_planning
-        goto(drone_id[i],package_info[i][0] ,package_info[i][1],package_info[i][2], v_travel); 
+        if state[i] == readytoland:
+            land(drone_id[i],target_height,v_landing)
+            state[i] = landing
+            desired_pos[i,2] = target_height
 
-        if reached_pos(drone_id[i],desired_pos,accuracy) == 1:
-            state1 = readytoland
+        if state[i] == landing:
+            if reached_height(drone_id[i],desired_pos[i,:],accuracy) ==1:
+                state[i] = delivering
+                counter[i] = 0
 
-    if state1 == readytoland:
-        land(drone_id[i],target_height,v_landing)
-        state1 = landing
-        des_pos[i,2] = target_height
+        if state[i] == delivering:
+            print(package_id[package_index[i]])
 
-    if state1 == landing:
-        if reached_pos(drone_id[i],des_pos[i,:],accuracy) ==1:
-            state1 = deliver
+            if package_info[i][package_index[i]][0] == x_base and package_info[i][package_index[i]][1] == y_base:
+                state[i] = pickingup
+            elif deliver(drone_id[i],str(package_id[package_index[i]])) == 1:
+                state[i] = readyfortakeoff
+                package_index[i] = package_index[i] + 1
+            elif deliver(drone_id[i],str(package_id[package_index[i]])) == 0 and counter[i]>8:
+                #goto(drone_id[i],package_info[i][package_index[i]][0] ,package_info[i][package_index[i] ][1],goto_height, v_travel)
+                state[i] = readyfortakeoff
 
-    if state1 == deliver:
-        if deliver(drone_id[i],package_info[package_index[i]][4]) == 1:
-            state1 = readyfortakeoff
-            # increase package index
+            counter[i] = counter[i] + 1
 
 

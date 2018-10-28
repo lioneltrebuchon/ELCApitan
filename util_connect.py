@@ -48,8 +48,8 @@ def status(drone_id):
     x = content['x']
     y = content['y']
     z = content['z']
-    battery_percentage = content['battery_percentage']
-    return (x,y,z,battery_percentage)
+    #battery_percentage = content['battery_percentage']
+    return (x,y,z)
 
 def package():
     command = hostname + swarm_id + '/package?dr=2M'
@@ -63,6 +63,20 @@ def package():
     id = content['id']
     weight = content['weight']
     return (x,y,z, weight, id)
+
+def pickup(drone_id, package_id):
+    command = hostname + swarm_id + '/' + str(drone_id) + '/pickup?dr=2M&package_id=' + str(package_id)
+    r = requests.get(command)
+    content = r.json()
+    print(content)
+    return content['success']
+
+def reset_package( seed):
+    command = hostname + swarm_id + '/reset_package_generator?dr=2M&swarm_id=' + str(swarm_id)
+    r = requests.get(command)
+    content = r.json()
+    print(content)
+    return content['success']
 
 # 5
 def deliver(drone_id, package_id):
@@ -118,14 +132,17 @@ def getBuildings():
     #(x,y,z,weight, id) = package()
     #print(status(31))
 
-    #connectDrone(31)
-    # takeoff(31,0.5,1)
-    # time.sleep(1)
-    # goto(31,1,2.5,0.5,1)
-    # time.sleep(5)
-    # land(31,0,0.5)
-    # time.sleep(3)
+    connectDrone(31)
+    (x,y,z, weight, id) = package()
+    wait = takeoff(31,0.5,1)
+    time.sleep(wait)
+    wait = goto(31,x,y,z,0.5)
+    time.sleep(wait)
+    wait = land(31,0,0.2)
+    time.sleep(wait)
+
     
-    #deliver(31,'303980036011023439451899638628793921164')
-    
-    #disconnectDrone(31)
+    deliver(31,id)
+    time.sleep(2)
+    disconnectDrone(31)
+
