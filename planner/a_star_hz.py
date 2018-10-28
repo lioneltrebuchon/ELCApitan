@@ -7,6 +7,9 @@ See Wikipedia article (https://en.wikipedia.org/wiki/A*_search_algorithm)
 
 import matplotlib.pyplot as plt
 import math
+import sys
+sys.path.extend('../map/')
+from calc_obstacle_map import *
 
 show_animation = True
 
@@ -23,7 +26,7 @@ class Node:
         return str(self.x) + "," + str(self.y) + "," + str(self.cost) + "," + str(self.pind)
 
 
-def calc_fianl_path(ngoal, closedset, reso):
+def calc_final_path(ngoal, closedset, reso):
     # generate final course
     rx, ry = [ngoal.x * reso], [ngoal.y * reso]
     pind = ngoal.pind
@@ -31,7 +34,7 @@ def calc_fianl_path(ngoal, closedset, reso):
         n = closedset[pind]
         rx.append(n.x * reso)
         ry.append(n.y * reso)
-        pind = n.
+        pind = n.pind
     return rx, ry
 
 
@@ -103,7 +106,7 @@ def a_star_planning(sx, sy, gx, gy, ox, oy, reso, rr, obmap, minx, miny, maxx, m
             node.cost = tcost
             openset[n_id] = node  # This path is the best unitl now. record it!
 
-    rx, ry = calc_fianl_path(ngoal, closedset, reso)
+    rx, ry = calc_final_path(ngoal, closedset, reso)
 
     return rx, ry
 
