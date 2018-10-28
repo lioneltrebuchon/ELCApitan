@@ -31,7 +31,7 @@ def calc_fianl_path(ngoal, closedset, reso):
         n = closedset[pind]
         rx.append(n.x * reso)
         ry.append(n.y * reso)
-        pind = n.
+        pind = n.pind
     return rx, ry
 
 
