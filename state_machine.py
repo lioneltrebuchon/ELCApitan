@@ -1,6 +1,9 @@
 import numpy as np
 from util_connect import *
 import time
+import sys
+sys.path.extend('planner/')
+from planner import *
 
 # -*- coding: utf-8 -*-
 
@@ -128,6 +131,7 @@ while(True):
 
         if state[i] == move:
             #call path_planning
+            x_next,y_next = planner(curr_pos[i][0],curr_pos[i][1],curr_pos[(i+1)%3][0],curr_pos[(i+1)%3)][1],curr_pos[i][1],curr_pos[(i+2)%3)][0],curr_pos[(i+2)%3)][1]) 
             goto(drone_id[i],package_info[i][package_index[i]][0] ,package_info[i][package_index[i] ][1],package_info[i][package_index[i] ][2], v_travel); 
 
             if reached_pos(drone_id[i],desired_pos[i,:],accuracy) == 1:
