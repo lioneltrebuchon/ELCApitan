@@ -91,7 +91,7 @@ def goto(drone_id, x, y, z, v):
     command = hostname + swarm_id + '/' + str(drone_id) + '/goto?x=' + str(x) + '&y=' + str(y) + '&z=' + str(z) + '&v=' + str(v) + '&dr=2M'
     r = requests.get(command)
     content = r.json()
-    print(content)
+    #print(content)
     return content['duration']
 
 # 7

@@ -139,7 +139,7 @@ while(True):
             desired_pos[i,2] = target_height
 
         if state[i] == landing:
-            if reached_height(drone_id[i],desired_pos[i,:],accuracy) ==1:
+            if reached_height(drone_id[i],desired_pos[i,:],0.15) ==1:
                 state[i] = delivering
                 counter[i] = 0
 
