@@ -48,8 +48,8 @@ def status(drone_id):
     x = content['x']
     y = content['y']
     z = content['z']
-    battery_percentage = content['battery_percentage']
-    return (x,y,z,battery_percentage)
+    #battery_percentage = content['battery_percentage']
+    return (x,y,z)
 
 def package():
     command = hostname + swarm_id + '/package?dr=2M'
@@ -63,6 +63,20 @@ def package():
     id = content['id']
     weight = content['weight']
     return (x,y,z, weight, id)
+
+def pickup(drone_id, package_id):
+    command = hostname + swarm_id + '/' + str(drone_id) + '/pickup?dr=2M&package_id=' + str(package_id)
+    r = requests.get(command)
+    content = r.json()
+    print(content)
+    return content['success']
+
+def reset_package( seed):
+    command = hostname + swarm_id + '/reset_package_generator?dr=2M&swarm_id=' + str(swarm_id)
+    r = requests.get(command)
+    content = r.json()
+    print(content)
+    return content['success']
 
 # 5
 def deliver(drone_id, package_id):
@@ -109,8 +123,9 @@ def getBuildings():
     buildins = content["buildings"]
     return
 
+
 # Testing.
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # Initializations.
     # hostname = 'http://10.4.14.28:5000'
     # Command to test.
